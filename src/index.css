@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  height: 100vh;
+  background-image: url('./assets/images/homeBg.png');
+  /* 替换为你的图片链接 */
+  background-size: cover;
+  /* 背景图片覆盖整个页面 */
+  background-position: center;
+  /* 背景图片居中 */
+  background-repeat: no-repeat;
+  /* 禁止背景图片重复 */
+  background: #0B0B0F;
+  font-family: Inter;
+  color: #ffffff;
+  padding: 18px 60px 100px 60px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.ant-menu-light .ant-menu-item-selected {
+  border-radius: 4px !important;
+  background: #F46171 !important;
+  color: #ffffff !important;
+}
+
+.ant-menu-item>.ant-menu-title-content {
+  font-family: Inter !important;
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  color: #ffffff !important;
+  width: 220px !important;
+  padding: 6px !important;
+  border-radius: 4px !important;
+}
+
+.ant-menu-light .ant-menu-item {
+  color: #ffffff !important;
+}
