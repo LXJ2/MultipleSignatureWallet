@@ -3,26 +3,40 @@ import {
   Form,
   Input,
   ConfigProvider,
-  Button
+  Col, Row
 } from 'antd';
 import styles from "../../styles/home.module.css"
+import { useEffect, useState, useMemo } from "react";
+import asset from "../../assets/images/wallet.svg"
+interface fromProps {
+  name: string;
+  address: `0x${string}`
+}
 
-export default function Launch() {
+const Home: FC<{ title?: string }> = ({ title }
+) => {
+
+  const [form] = Form.useForm();
+  const [formValue, setFormValue] = useState<fromProps>();
+
+  const onValuesChange = (changedValues: any, allValues: any) => {
+    setFormValue(allValues)
+  };
 
   return (
     <>
-      <div className={styles.title}>Current Wallet</div>
-      <div>
+      <div className={styles.formBox}>
+        <div className={styles.title}>Current Wallet</div>
         <ConfigProvider
           theme={{
             components: {
               Form: {
-                labelColor: '#232D9E',
-                labelFontSize: 16,
+                labelColor: '#ffffff',
+                labelFontSize: 12,
                 labelColonMarginInlineStart: 4,
-                labelColonMarginInlineEnd: 12,
-                itemMarginBottom: 18,
-                inlineItemMarginBottom: 18,
+                labelColonMarginInlineEnd: 1,
+                itemMarginBottom: 10,
+                inlineItemMarginBottom: 1
               },
             },
           }}>
@@ -32,63 +46,128 @@ export default function Launch() {
             layout="vertical"
           >
             <Row>
-              <Col span={8}>
+              <Col span={6}>
                 <Form.Item
-                  label="Image"
-                  name="tokenImage"
+                  label="Signer Name"
+                  name="name1"
                   rules={[{ required: true, message: 'Required' }]}
                 >
-                  <ImageUploader onImageUpload={handleImageUpload} account={account as `0x${string}`}></ImageUploader>
+                  <Input style={{ height: '32px', marginRight: '20px' }} />
                 </Form.Item>
               </Col>
               <Col span={16}>
                 <Form.Item
-                  label="Token Name"
-                  name="name"
+                  label="Public Address"
+                  name="address1"
                   rules={[{ required: true, message: 'Required' }]}
                 >
-                  <Input.TextArea showCount maxLength={20} style={{ height: '70px' }} />
-                </Form.Item>
-                <Form.Item
-                  label="Token Symbol"
-                  name="symbol"
-                  rules={[{ required: true, message: 'Required' }]}
-                >
-                  <Input.TextArea showCount maxLength={10} style={{ height: '70px' }} />
+                  <Input style={{ height: '32px', width: '500px' }} />
                 </Form.Item>
               </Col>
             </Row>
-            <Form.Item
-              label="Token Description"
-              name="desc"
-              rules={[{ required: true, message: 'Required' }]}
-            >
-              <Input.TextArea maxLength={256} showCount style={{ height: '220px' }} />
-            </Form.Item>
-            <Form.Item
-              label="Website"
-              name="website"
-            >
-              <Input style={{ height: '70px' }} placeholder='Optional' />
-            </Form.Item>
-            <Form.Item
-              label="Telegram"
-              name="telegram"
-            >
-              <Input style={{ height: '70px' }} placeholder='Optional' />
-            </Form.Item>
-            <Form.Item
-              label="Twitter"
-              name="twitter"
-            >
-              <Input style={{ height: '70px' }} placeholder='Optional' />
-            </Form.Item>
-
+            <Row>
+              <Col span={6}>
+                <Form.Item
+                  label="Signer Name"
+                  name="name2"
+                  rules={[{ required: true, message: 'Required' }]}
+                >
+                  <Input style={{ height: '32px', marginRight: '20px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={16}>
+                <Form.Item
+                  label="Public Address"
+                  name="address2"
+                  rules={[{ required: true, message: 'Required' }]}
+                >
+                  <Input style={{ height: '32px', width: '500px' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={6}>
+                <Form.Item
+                  label="Signer Name"
+                  name="name3"
+                  rules={[{ required: true, message: 'Required' }]}
+                >
+                  <Input style={{ height: '32px', marginRight: '20px' }} />
+                </Form.Item>
+              </Col>
+              <Col span={16}>
+                <Form.Item
+                  label="Public Address"
+                  name="address3"
+                  rules={[{ required: true, message: 'Required' }]}
+                >
+                  <Input style={{ height: '32px', width: '500px' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Form.Item
+                label=""
+                name=""
+              >
+                <div className={styles.viewAll}>View All</div>
+              </Form.Item>
+            </Row>
+            <Row>
+              <Col span={24}>
+                <Form.Item
+                  label=""
+                  name=""
+                >
+                  <div className={styles.tips}>Any transaction requires the confirmation of 2 of signers.</div>
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </ConfigProvider>
       </div>
+
+      <div className={styles.other}>
+        <div className={styles.title}>Other Wallet</div>
+        <div className='flex'>
+          <div className={styles.itemBox}>
+            <div className={styles.assets}>
+              <img src={asset} alt="" height={30} width={30} />
+              <div>
+                <div className={styles.address}>bc1pzx...ygwcn</div>
+                <div className={styles.address}>Total deposits</div>
+                <div className={styles.number}>$ 78,342</div>
+              </div>
+            </div>
+            <div className={styles.switch}>Switch to this</div>
+          </div>
+          <div className={styles.itemBox}>
+            <div className={styles.assets}>
+              <img src={asset} alt="" height={30} width={30} />
+              <div>
+                <div className={styles.address}>bc1pzx...ygwcn</div>
+                <div className={styles.address}>Total deposits</div>
+                <div className={styles.number}>$ 78,342</div>
+              </div>
+            </div>
+            <div className={styles.switch}>Switch to this</div>
+          </div>
+          <div className={styles.itemBox}>
+            <div className={styles.assets}>
+              <img src={asset} alt="" height={30} width={30} />
+              <div>
+                <div className={styles.address}>bc1pzx...ygwcn</div>
+                <div className={styles.address}>Total deposits</div>
+                <div className={styles.number}>$ 78,342</div>
+              </div>
+            </div>
+            <div className={styles.switch}>Switch to this</div>
+          </div>
+        </div>
+      </div>
+
     </>
   )
 }
 
-
+export { Home };

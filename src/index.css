@@ -42,3 +42,45 @@ code {
 .ant-menu-light .ant-menu-item {
   color: #ffffff !important;
 }
+
+.ant-input-outlined {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+}
+
+.ant-input-outlined:hover {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important
+}
+
+.ant-input-outlined:focus {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important
+}
+
+.ant-select-selector {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+}
+
+.ant-select-selector:hover {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important
+}
+
+.ant-select-selector:focus {
+  background: #0B0B0F !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important
+}
+
+.ant-select .ant-select-arrow {
+  color: #ffffff;
+}
+
+.ant-col {
+  margin-right: 20px;
+}

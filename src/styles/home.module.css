@@ -1,1 +1,69 @@
-.title {}
+.title {
+    color: #F46171;
+    font-family: Inter;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.tips {
+    color: #ffffff;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ffffff;
+    width: 820px;
+}
+
+.viewAll {
+    color: #ffffff;
+    margin-top: 20px;
+}
+
+.other {
+    margin-top: 20px;
+}
+
+.other img {
+    margin-right: 8px;
+}
+
+.itemBox {
+    margin-right: 52px;
+}
+
+.assets {
+    display: flex;
+    border-radius: 4px;
+    border: 1px solid #FFF;
+    padding: 4px 8px;
+}
+
+.address {
+    font-size: 14px;
+}
+
+.number {
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.switch {
+    text-align: center;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+.deleteBtn {
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    margin-bottom: -15px;
+    cursor: pointer;
+    color: #FFF;
+}

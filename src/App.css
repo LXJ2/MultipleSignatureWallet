@@ -1,7 +1,7 @@
 /* 左侧导航固定宽度 */
 #leftMenu {
     position: absolute;
-    top: 150px;
+    top: 120px;
     bottom: 100px;
     background: none;
 }
@@ -33,7 +33,7 @@
     box-sizing: border-box;
     margin-left: 72px;
     position: absolute;
-    top: 150px;
+    top: 120px;
     left: 300px;
     right: 0;
     bottom: 0;
