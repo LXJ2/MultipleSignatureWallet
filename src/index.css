@@ -44,8 +44,11 @@ code {
 }
 
 .ant-input-outlined {
-  background: #0B0B0F !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
   color: #ffffff !important;
+  height: 60px !important;
 }
 
 .ant-input-outlined:hover {
@@ -83,4 +86,82 @@ code {
 
 .ant-col {
   margin-right: 20px;
+}
+
+.ant-btn-primary {
+  border-radius: 10px;
+  border: 1px solid var(--gradient-light, rgba(255, 255, 255, 0.47));
+  background: #F46171;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  padding: 22px 36px;
+}
+
+.ant-btn-primary:hover {
+  border-radius: 10px;
+  border: 1px solid var(--gradient-light, rgba(255, 255, 255, 0.47));
+  background: #ef4b61 !important;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  padding: 22px 36px;
+}
+
+.ant-steps-item-title {
+  color: #ffffff !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+  background-color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.ant-steps .ant-steps-item-tail::after {
+  background-color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.ant-steps .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-tail::after {
+  background-color: #ef4b61 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: #ef4b61 !important;
+  border-color: #ef4b61 !important;
+}
+
+.ant-steps .ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+  color: #ef4b61 !important;
+}
+
+.ant-collapse-arrow svg {
+  color: #fff;
+}
+
+.ant-card {
+  background: #0B0B0F !important;
+  color: #ffffff;
+}
+
+.ant-card .ant-card-head {
+  color: #ffffff;
+}
+
+.ant-collapse .ant-collapse-content {
+  color: #ffffff;
+  background-color: #0B0B0F;
+  border-top: 1px solid #d9d9d9;
+}
+
+.ant-dropdown-menu-item {
+  color: #ffffff !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #0B0B0F !important;
+  color: #ffffff !important;
+}
+
+.ant-dropdown-menu {
+  background: #363333 !important;
+  color: #ffffff;
 }

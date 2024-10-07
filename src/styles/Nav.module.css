@@ -21,20 +21,27 @@
 .connectWalletBtn {
   display: flex;
   align-items: center;
-  background-color: #EDE2FF;
-  font-family: Inter, Inter;
-  font-weight: normal;
-  font-size: 16px;
-  color: #3E1089;
-  font-weight: 550;
-  padding: 10px 18px;
+  justify-content: center;
+  border-radius: 7px;
+  border: 1px solid #FFF;
+  background: #000;
+  padding: 10px 25px;
   cursor: pointer;
-  background: #EDE2FF;
-  border-radius: 8px 8px 8px 8px;
-  outline: none;
-  user-select: none;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
 }
 
-.walletAdressBtn {
-  background-color: #EDE2FF;
+.connect {
+  display: flex;
+  align-items: center;
+  background: #363333;
+  border-radius: 7px;
+  padding: 4px 0 4px 10px;
+  cursor: pointer;
+}
+
+.account {
+  margin-right: 16px;
 }

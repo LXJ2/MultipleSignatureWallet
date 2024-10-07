@@ -86,7 +86,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     icon: "./images/artifacts/fractalbitcoin-mainnet.png",
     unit: "tFB",
     networkType: NetworkType.MAINNET,
-    endpoints: ["https://wallet-api-fractal.unisat.io/testnet"],
+    endpoints: ["https://wallet-api-fractal-testnet.unisat.io"],
     mempoolSpaceUrl: "https://mempool-testnet.fractalbitcoin.io",
     unisatUrl: "https://fractal-testnet.unisat.io",
     ordinalsUrl: "https://ordinals-testnet.fractalbitcoin.io",

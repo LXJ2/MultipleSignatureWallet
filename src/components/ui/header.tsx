@@ -31,7 +31,7 @@ export default function Header() {
           <div className="shrink-0 mr-4 flex items-center justify-between text-white">
             <div className={styles.title}>
               <img src={logo} alt="" width={30} height={30} />
-              MTXO
+              MTXO Wallet
             </div>
           </div>
 

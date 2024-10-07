@@ -1,9 +1,13 @@
 import useMessage from "antd/es/message/useMessage";
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Card, CollapseProps, Input, Radio, message } from "antd";
+import { Divider, Dropdown, Menu } from 'antd';
 import { CHAINS_MAP, ChainType } from "../../const";
+import styles from "../../styles/Nav.module.css"
+import { shortenAddress, satoshisToAmount } from "../../utils"
+import { useNavigate } from 'react-router-dom';
 
 export default function Connect() {
+  const navigate = useNavigate(); // 创建导航器
   const [unisatInstalled, setUnisatInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
@@ -15,14 +19,19 @@ export default function Connect() {
     total: 0,
   });
   const [network, setNetwork] = useState("livenet");
-
-  const [version, setVersion] = useState("");
-
   const [chainType, setChainType] = useState<ChainType>(
     ChainType.BITCOIN_MAINNET
   );
-
   const chain = CHAINS_MAP[chainType];
+
+  useEffect(() => {
+    localStorage.setItem('publicKey', publicKey);
+    localStorage.setItem('connected', connected ? '1' : '0');
+    localStorage.setItem('address', address);
+    localStorage.setItem('balance', JSON.stringify(balance));
+    localStorage.setItem('chainType', chainType);
+    localStorage.setItem('chain', JSON.stringify(chain));
+  }, [publicKey, address, balance, network, chainType, connected])
 
   const getBasicInfo = async () => {
     const unisat = (window as any).unisat;
@@ -36,7 +45,7 @@ export default function Connect() {
 
     try {
       const publicKey = await unisat.getPublicKey();
-      setPublicKey(publicKey);
+      setPublicKey(publicKey.slice(2));
     } catch (e) {
       console.log("getPublicKey error", e);
     }
@@ -62,13 +71,6 @@ export default function Connect() {
       console.log("getNetwork error", e);
     }
 
-    try {
-      const version = await unisat.getVersion();
-      setVersion(version);
-    } catch (e) {
-      console.log("getVersion error ", e);
-    }
-
     if (unisat.getChain !== undefined) {
       try {
         const chain = await unisat.getChain();
@@ -84,7 +86,6 @@ export default function Connect() {
   });
   const self = selfRef.current;
   const handleAccountsChanged = (_accounts: string[]) => {
-    console.log("accounts changed", _accounts);
     if (self.accounts[0] === _accounts[0]) {
       // prevent from triggering twice
       return;
@@ -103,7 +104,6 @@ export default function Connect() {
   };
 
   const handleNetworkChanged = (network: string) => {
-    console.log("network changed", network);
     setNetwork(network);
     getBasicInfo();
   };
@@ -113,7 +113,6 @@ export default function Connect() {
     name: string;
     network: string;
   }) => {
-    console.log("chain changed", chain);
     setChainType(chain.enum);
     getBasicInfo();
   };
@@ -159,37 +158,68 @@ export default function Connect() {
 
   const unisat = (window as any).unisat;
 
-
   if (!unisatInstalled) {
     return (
       <div className="App">
         <header className="App-header">
           {contextHolder}
           <div>
-            <Button
+            <div
               onClick={() => {
                 window.location.href = "https://unisat.io";
               }}
+              className={styles.connectWalletBtn}
             >
               Install Unisat Wallet
-            </Button>
+            </div>
           </div>
         </header>
       </div>
     );
   }
+
+  const menuItems = [
+    {
+      label: (
+        <a href={`https://unisat.io/address/${address}`} target="_blank" rel="noopener noreferrer">
+          (Unisat) {shortenAddress(address)}
+        </a>
+      ),
+      key: 'unisat',
+    },
+    {
+      label: 'My portfolio',
+      key: 'portfolio',
+      onClick: () => navigate('/deposits'),
+    },
+    {
+      label: (<>
+        <div onClick={async () => {
+          await unisat.disconnect();
+        }}>Disconnect</div>
+      </>),
+      key: 'disconnect',
+    },
+  ];
   return <>
-    <div style={{ minWidth: 200 }}>
+    <div>
+      {contextHolder}
       {connected ? (
-        <Button
-          onClick={async () => {
-            await unisat.disconnect();
-          }}
-        >
-          disconnect
-        </Button>
+        <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+          <div className={styles.connect} >
+            <div className={styles.account}>
+              {satoshisToAmount(balance.total)} {chain && chain.unit}
+            </div>
+            <div
+
+              className={styles.connectWalletBtn}
+            >
+              {shortenAddress(address)}
+            </div>
+          </div>
+        </Dropdown>
       ) : <div>
-        <Button
+        <div
           onClick={async () => {
             try {
               const result = await unisat.requestAccounts();
@@ -198,9 +228,10 @@ export default function Connect() {
               messageApi.error((e as any).message);
             }
           }}
+          className={styles.connectWalletBtn}
         >
           Connect Unisat Wallet
-        </Button>
+        </div>
       </div>}
     </div>
   </>;

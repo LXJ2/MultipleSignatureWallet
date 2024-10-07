@@ -6,23 +6,26 @@ import Routes from './routes';
 //import GlobalStyle from './styles/globalStyles';
 import "./App.css";
 import Sider from "./components/ui/menu";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
+  const queryClient = new QueryClient();
 
   return (
     <>
-      <BrowserRouter>
-        <Header></Header>
-        <div>
-          <div id="leftMenu">
-            <Sider></Sider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Header></Header>
+          <div>
+            <div id="leftMenu">
+              <Sider></Sider>
+            </div>
+            <div id="rightWrap">
+              <Routes />
+            </div>
           </div>
-          <div id="rightWrap">
-            <Routes />
-          </div>
-        </div>
-      </BrowserRouter>
-
+        </BrowserRouter>
+      </QueryClientProvider>
     </>
   );
 }

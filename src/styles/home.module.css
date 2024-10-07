@@ -23,12 +23,15 @@
     margin-top: 20px;
 }
 
-.other img {
+.itemBox img {
     margin-right: 8px;
 }
 
 .itemBox {
-    margin-right: 52px;
+    width: 180px;
+    margin-bottom: 16px;
+    margin-left: 4px;
+    cursor: pointer;
 }
 
 .assets {
@@ -66,4 +69,107 @@
     margin-bottom: -15px;
     cursor: pointer;
     color: #FFF;
+}
+
+.btcAccount {
+    width: 730px;
+    height: 66px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btcLeft {
+    display: flex;
+    align-items: center;
+}
+
+.btcRight {
+    display: flex;
+    align-items: center;
+}
+
+.btcRight img {
+    margin-left: 16px;
+    width: 19px;
+    height: 10px;
+}
+
+.btcLeft img {
+    margin-right: 16px;
+}
+
+.qrcode {
+    width: 232px;
+    height: 232px;
+    border-radius: 10px;
+    padding: 16px;
+    background: #FFF;
+    margin: 50px 0;
+}
+
+.deposits {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.steps {
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.step {
+    width: 370px;
+    border: 2px solid rgba(255, 255, 255, 0.50);
+    height: 4px;
+    cursor: pointer;
+}
+
+.stepSelect {
+    border: 3px solid #fff;
+}
+
+.inputAddress {
+    color: rgba(255, 255, 255, 0.20);
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+}
+
+.utxoBox {
+    display: flex;
+    border-radius: 4px;
+    border: 1px solid #FFF;
+    padding: 4px 8px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.utxoSelect {
+    background: #F46171;
+    border: none;
+}
+
+.connectWalletBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    border: 1px solid #FFF;
+    background: #000;
+    padding: 4px 20px;
+    cursor: pointer;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
 }
