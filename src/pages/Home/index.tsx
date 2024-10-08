@@ -83,7 +83,7 @@ const Home: FC<{ title?: string }> = ({ title }
           signers.map((item, index) => {
             return (
               <div className={styles.btcAccount} style={{ fontSize: '20px', marginBottom: '10px' }} key={item.id}>
-                {item.walletAddress}
+                {item.publicKey}
               </div>
             )
           })
