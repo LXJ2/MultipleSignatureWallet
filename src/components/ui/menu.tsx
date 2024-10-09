@@ -44,7 +44,7 @@ const Sider: React.FC = () => {
     // 处理菜单项点击事件
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         navigate(e.key);  // 根据 key 跳转到对应的路由
-    };
+    }
 
     const getbanlance = async () => {
         const res = await fetch(

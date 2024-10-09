@@ -57,7 +57,7 @@ const Step2 = forwardRef<Step1Handle, step1Data>((props: step1Data, ref) => {
         try {
             getMaxAccount(allValues)
         } catch (error) {
-            messageApi.error(error + '')
+            // messageApi.error(error + '')
             console.log('errorInfo:', error);
         }
         setFormValue(allValues)
@@ -130,13 +130,13 @@ const Step2 = forwardRef<Step1Handle, step1Data>((props: step1Data, ref) => {
         let toSignInputs = Array.from(selectUtxos, (item, index) => { return { index: index, address: address, disableTweakSigner: true } })
 
         const psbt = generatePSBT(account, selectUtxos, outputs)
-        console.log(toSignInputs, hex.encode(psbt));
+
         try {
             const signPSBT = await unisat.signPsbt(hex.encode(psbt), {
                 autoFinalized: false,
                 toSignInputs: toSignInputs,
             })
-            console.log(signPSBT);
+
             postPsbt({ wallet: currentWalletInfor.address, psbt: signPSBT })
         } catch (error: any) {
             messageApi.error(error.message)

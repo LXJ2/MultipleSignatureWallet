@@ -137,6 +137,9 @@ const NewWallet: FC<{ title?: string }> = ({ title }
             const result = await response.json();
             messageApi.success('Create Successfully!')
             console.log('Server response:', result);
+            localStorage.setItem('currentWallet', postData.address);
+            localStorage.setItem('currentWalletInfor', JSON.stringify(postData));
+            window.location.reload();
             form.resetFields();
         } catch (error) {
             console.error('Error sending POST request:', error);

@@ -20,10 +20,12 @@ const Home: FC<{ title?: string }> = ({ title }
   const [account, setAccount] = useState<walletProps[]>([]);
   const [signers, setWalletInfor] = useState<signersProp[]>([])
   const [publicKey, setPublicKey] = useState(localStorage.getItem('publicKey'));
+  const [currentWallet, setCurrentWallet] = useState(localStorage.getItem('currentWallet'));
 
   useEffect(() => {
     getAccounts()
-  }, [publicKey])
+    getAccount(currentWallet as string)
+  }, [publicKey, currentWallet])
 
   const getAccounts = async () => {
     try {
@@ -40,16 +42,13 @@ const Home: FC<{ title?: string }> = ({ title }
 
       const result = await response.json();
       setAccount(result)
-      localStorage.setItem('currentWallet', result[0].wallet.address);
-      getAccount(result[0].wallet.address)
-      console.log('Server response:', result);
     } catch (error) {
       console.error('Error sending POST request:', error);
     }
   }
 
   const getAccount = async (wallet: string) => {
-
+    let result
     try {
       const response = await fetch(`https://api.mtxo.dev/wallet/${wallet}`, {
         method: 'GET',
@@ -62,23 +61,27 @@ const Home: FC<{ title?: string }> = ({ title }
         throw new Error('Network response was not ok');
       }
 
-      const result = await response.json();
+      result = await response.json();
       setWalletInfor(result.signers)
       localStorage.setItem('currentWallet', result.address);
       localStorage.setItem('currentWalletInfor', JSON.stringify(result));
     } catch (error) {
       console.error('Error sending POST request:', error);
     }
+    return result
   }
 
-  const switchWallet = (wallet: string) => {
-    getAccount(wallet)
+  const switchWallet = async (wallet: string) => {
+    const res = await getAccount(wallet)
+    if (res.address) {
+      window.location.reload();
+    }
   }
 
   return (
     <>
       <div className={styles.formBox}>
-        <div className={styles.title}>Current Wallet</div>
+        <div className={styles.title}>Signer Publickey</div>
         {
           signers.map((item, index) => {
             return (
@@ -92,7 +95,7 @@ const Home: FC<{ title?: string }> = ({ title }
       </div>
 
       <div className={styles.other}>
-        <div className={styles.title}>Other Wallet</div>
+        <div className={styles.title}>Multi-sig Wallet List</div>
         <div className='grid grid-cols-4 gap-4 mt-6'>
           {account?.map((item, index) => {
             return (

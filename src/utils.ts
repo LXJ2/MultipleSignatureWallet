@@ -3,7 +3,7 @@ import * as btc from "@scure/btc-signer";
 import { tapLeafHash, type P2TROut } from "@scure/btc-signer/payment";
 import { equalBytes, type Bytes } from "@scure/btc-signer/utils";
 import * as P from "micro-packed";
-
+import { hex } from "@scure/base";
 
 export function satoshisToAmount(val: number) {
   const num = new BigNumber(val);
@@ -162,7 +162,7 @@ export const getMusigInfo = (tx: btc.Transaction) => {
     const hash = tapLeafHash(script, ver);
 
     let signatures: Bytes[] = [];
-
+    let signers: Bytes[] = [];
     if (outScript.type === "tr_ms") {
       const m = outScript.m;
 
@@ -180,20 +180,45 @@ export const getMusigInfo = (tx: btc.Transaction) => {
       let added = 0;
       for (const pub of pubkeys) {
         const sigIdx = scriptSig.findIndex((i) => equalBytes(i[0].pubKey, pub));
+        // console.log(scriptSig.map((i) => hex.encode(i[0].pubKey)));
+        // console.log(hex.encode(pub));
         // Should have exact amount of signatures (more -- will fail)
         if (added === m || sigIdx === -1) {
           signatures.push(P.EMPTY);
           continue;
         }
         signatures.push(scriptSig[sigIdx][1]);
+        signers.push(pub);
         added++;
       }
 
       return {
         m,
         added,
-        signatures
+        signers: signers.map((i) => hex.encode(i)),
       };
     }
   }
+};
+
+export const getTxInfo = (tx: btc.Transaction) => {
+  const inputs: { txid: string; index: Number }[] = [];
+  const outputs: { address: string; amount: BigInt }[] = [];
+  for (let i = 0; i < tx.inputsLength; i++) {
+    const input = tx.getInput(i);
+    inputs.push({
+      txid: hex.encode(input.txid!),
+      index: input.index!,
+    });
+
+    for (let i = 0; i < tx.inputsLength; i++) {
+      const output = tx.getOutput(i);
+      outputs.push({
+        address: btc.Address().encode(btc.OutScript.decode(output.script!)),
+        amount: output.amount!,
+      });
+    }
+  }
+
+  return { inputs, outputs };
 };

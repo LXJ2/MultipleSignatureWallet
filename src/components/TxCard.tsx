@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { Card, Row, Col, Button, Tooltip, Divider } from "antd";
 import { CopyOutlined, EyeOutlined } from "@ant-design/icons";
-import { getMusigInfo, shortenAddress } from '../utils'
+import { getMusigInfo, shortenAddress, getTxInfo, satoshisToAmount } from '../utils'
 import styles from "../styles/home.module.css"
 import * as btc from "@scure/btc-signer";
 import { hex } from "@scure/base";
@@ -23,21 +23,57 @@ export interface singerIfor {
   added: number,
   m: number
 }
-export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, update }) => {
+
+interface TxCardData {
+  item: ConfirmedTx,
+  update: () => void
+}
+
+// 定义子组件方法的类型
+export type TxCardHandle = {
+  getData: () => void
+};
+
+export interface inputs { txid: string; index: Number }
+
+export interface outputs { address: string; amount: BigInt }
+
+
+const TxCard = forwardRef<TxCardHandle, TxCardData>((props: TxCardData, ref) => {
+  const { item, update } = props
+
   const [currentWalletInfor, setCurrentWalletInfor] = useState(JSON.parse(localStorage.getItem('currentWalletInfor') || "{}"));
   const [currentWallet, setCurrentWallet] = useState(localStorage.getItem('currentWallet'));
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
-
+  const [publicKey, setPublicKey] = useState(localStorage.getItem("publicKey"));
   const [signerInfor, setSignerInfor] = useState<singerIfor>();
+  const [isSigner, setIsSigner] = useState(false)
   const [signers, setSigners] = useState<string[] | undefined>([]);
   const [messageApi, contextHolder] = useMessage();
   const [psbtTx, setPsbtTx] = useState<btc.Transaction>();
   const [psbt, setPsbt] = useState();
-
+  const [inputs, setInputs] = useState<inputs[]>([])
+  const [outputs, setOutputs] = useState<outputs[]>([])
+  const [chain, setChain] = useState(JSON.parse(localStorage.getItem('chain') || "{}"));
 
   useEffect(() => {
     getPsbt()
   }, [currentWallet])
+
+  useEffect(() => {
+    signers?.forEach((item, index) => {
+
+      if (item == publicKey) {
+        setIsSigner(true)
+      }
+    })
+    console.log(isSigner);
+
+  }, [signers, isSigner])
+
+  useImperativeHandle(ref, () => ({
+    getData: getPsbt
+  }));
 
   const getPsbt = async () => {
     try {
@@ -60,9 +96,13 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
       );
       setPsbt(result?.psbt)
       setPsbtTx(psbtTx)
+      let txData = getTxInfo(psbtTx)
+
+      setInputs(txData.inputs)
+      setOutputs(txData.outputs)
       const signer = getMusigInfo(psbtTx)
       setSignerInfor(signer)
-      let singers = signer?.signatures?.map(item => hex.encode(item))
+      let singers = signer?.signers
       setSigners(singers)
 
     } catch (error) {
@@ -85,8 +125,10 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
       }
 
       const result = await response.json();
-      update()
+
       messageApi.success('Update Transaction Successfully!')
+      update()
+      getPsbt()
       console.log('Server response:', result);
     } catch (error) {
       console.error('Error sending POST request:', error);
@@ -109,16 +151,18 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
         toSignInputs: toSignInputs,
       })
 
-      postPsbt({ id: item!.id, psbt: signPSBT })
       if ((signerInfor!.added + 1) == currentWalletInfor?.threshold) {
         const psbtTx = btc.Transaction.fromPSBT(
           hex.decode(
             signPSBT,
           ),
         );
+
         psbtTx.finalize();
         const rawTx = psbtTx.hex;
-        sendToChain(rawTx)
+        sendToChain(rawTx, signPSBT)
+      } else {
+        postPsbt({ id: item!.id, psbt: signPSBT })
       }
     } catch (error: any) {
       messageApi.error(error.message)
@@ -126,16 +170,13 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
     }
   }
 
-  const sendToChain = async (rawtx: string) => {
-    const unisat = (window as any).unisat;
+  const sendToChain = async (rawtx: string, signPSBT: string) => {
     try {
-      let txid = await unisat.pushTx({
-        rawtx: rawtx
-      });
-      update()
-      getPsbt()
+      const txid = await (window as any).unisat.pushTx(rawtx);
+      console.log(txid);
+      postPsbt({ id: item!.id, psbt: signPSBT })
     } catch (e) {
-      console.log(e);
+      console.log('pushTx', e);
     }
   }
 
@@ -145,12 +186,77 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
         <Card size="small" style={{ margin: 10, background: 'rgba(255, 255, 255, 0.05)' }} className="grow">
           {item?.txid ? <div style={{ textAlign: "left", marginTop: 10, display: 'flex' }}>
             <div style={{ fontWeight: "bold" }}>Transaction hash:</div>
-            <div style={{ marginLeft: '10px' }}>{item?.txid}</div>
+            <div style={{ marginLeft: 20 }}>{item?.txid}</div>
           </div> : ''}
           <div style={{ textAlign: "left", marginTop: 10, display: 'flex' }}>
-            <div style={{ fontWeight: "bold" }}>Created:</div>
-            <div style={{ marginLeft: '10px' }}>{item?.createAt}</div>
+            <div style={{ fontWeight: "bold", }}>Created:</div>
+            <div style={{ marginLeft: 20 }}>{item?.createAt}</div>
           </div>
+          <div style={{ textAlign: "left", marginTop: 10, }}>
+            <div style={{ fontWeight: "bold", }}>Input:</div>
+            <div style={{ border: '1px solid #fff', padding: 10, marginTop: 5 }}>
+              {inputs.map(x => {
+                return <div style={{ textAlign: "left", marginTop: 10, display: 'flex', alignItems: 'center' }} key={x.txid}>
+                  <div style={{ fontWeight: "bold" }}>Txid:</div>
+                  <div style={{ marginLeft: 20, }}>{shortenAddress(x?.txid)}</div>
+                  <div style={{
+                    width: 30,
+                    height: 30,
+                    marginRight: 10,
+                    marginLeft: 10
+                  }}>
+                    <Tooltip title="Copy Address">
+                      <Button
+                        shape="circle"
+                        icon={<CopyOutlined />}
+                        onClick={() => navigator.clipboard.writeText(x?.txid)}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          marginRight: 10,
+                        }}
+                      />
+                    </Tooltip>
+                  </div>
+                  <div style={{ fontWeight: "bold", marginLeft: '10px' }}>Vout:</div>
+                  <div style={{ marginLeft: '10px' }}>{x?.index + ''}</div>
+                </div>
+              })}
+            </div>
+          </div>
+          <div style={{ textAlign: "left", marginTop: 10, }}>
+            <div style={{ fontWeight: "bold", }}>Output:</div>
+            <div style={{ border: '1px solid #fff', padding: 10, marginTop: 5 }}>
+              {outputs.map((i, index) => {
+                return <div style={{ textAlign: "left", marginTop: 10, display: 'flex', alignItems: 'center' }} key={index}>
+                  <div style={{ fontWeight: "bold" }}>Address:</div>
+                  <div style={{ marginLeft: 20, }}>{shortenAddress(i?.address)}</div>
+                  <div style={{
+                    width: 30,
+                    height: 30,
+                    marginRight: 10,
+                    marginLeft: 10
+                  }}>
+                    <Tooltip title="Copy Address">
+                      <Button
+                        shape="circle"
+                        icon={<CopyOutlined />}
+                        onClick={() => navigator.clipboard.writeText(i?.address)}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          marginRight: 10,
+                        }}
+                      />
+                    </Tooltip>
+                  </div>
+                  <div style={{ fontWeight: "bold", marginLeft: '10px' }}>Amount:</div>
+                  <div style={{ marginLeft: '10px' }}>{satoshisToAmount(Number(i?.amount))} {chain && chain.unit}</div>
+                </div>
+              })}
+
+            </div></div>
+
         </Card>
         {/* Right side content */}
         <div className="flex-none w-[250px] m-[20px] text-[12px]">
@@ -220,7 +326,7 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
             </Col>
           </Row>}
 
-          {item?.txid ? '' : <Row style={{ marginTop: 20 }}>
+          {item?.txid ? '' : isSigner ? '' : <Row style={{ marginTop: 20 }}>
             <div className={styles.connectWalletBtn} style={{ marginRight: '20px' }} onClick={() => { sendToSigner() }}>
               Confirm
             </div >
@@ -234,6 +340,9 @@ export const TxCard: FC<{ item: ConfirmedTx, update: () => void }> = ({ item, up
     </>
 
   );
-}
+})
+
+export { TxCard };
+
 
 

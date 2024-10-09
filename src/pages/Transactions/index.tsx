@@ -8,7 +8,7 @@ import Btc from "../../assets/images/btc.svg"
 import arrowDown from "../../assets/images/arrowDown.svg"
 import { useEffect, useState, useRef } from "react";
 import styles from "../../styles/home.module.css"
-import { copyToClipboard, satoshisToAmount } from "../../utils";
+import { copyToClipboard, } from "../../utils";
 import { Button, Card, CollapseProps, Collapse, message } from "antd";
 import { TxCard } from "../../components/TxCard"
 import { Tag } from 'antd';
@@ -36,7 +36,7 @@ const Transactions: FC<{ title?: string }> = ({ title }) => {
   const [currentWallet, setCurrentWallet] = useState(localStorage.getItem('currentWallet'));
   const [transactions, setTransactions] = useState<CollapseProps["items"]>([])
   const [currentWalletInfor, setCurrentWalletInfor] = useState(JSON.parse(localStorage.getItem('currentWalletInfor') || "{}"));
-
+  const txCardRef = useRef<any>(null);
   useEffect(() => {
     getTransactions()
   }, [currentWallet])
@@ -67,7 +67,7 @@ const Transactions: FC<{ title?: string }> = ({ title }) => {
             <div style={{ color: '#F46171' }}>{`${element.signerCount} out of ${currentWalletInfor?.threshold}`}</div>
             <Tag>confirm</Tag>
           </div>,
-          children: <TxCard item={element} update={getTransactions} />,
+          children: <TxCard item={element} update={getTransactions} ref={txCardRef} />,
         })
       });
       result?.confirmedTx?.forEach((element: ConfirmedTx, index: any) => {
@@ -79,12 +79,18 @@ const Transactions: FC<{ title?: string }> = ({ title }) => {
             <div>{element.createAt}</div>
             <Tag color="green">success</Tag>
           </div>,
-          children: <TxCard item={element} update={getTransactions} />,
+          children: <TxCard item={element} update={getTransactions} ref={txCardRef} />,
         })
       });
       setTransactions(arr)
     } catch (error) {
       console.error('Error sending POST request:', error);
+    }
+  }
+
+  const onChange = () => {
+    if (txCardRef.current) {
+      const getData = txCardRef.current.getData(); // 调用子组件的方法
     }
   }
 
@@ -103,7 +109,8 @@ const Transactions: FC<{ title?: string }> = ({ title }) => {
           items={transactions}
           defaultActiveKey={[]}
           onChange={() => {
-            // todo
+            // todoonChange
+            onChange()
           }}
         />
 
